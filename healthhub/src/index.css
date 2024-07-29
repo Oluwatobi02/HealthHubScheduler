@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body {
+    height: 100svh;
+
+}
+#root {
+    height: 100%;
+}
+
+/* Add this to your Tailwind CSS file or a global CSS file */
+.hcp-nav-item {
+    @apply flex items-center space-x-3 p-3 text-gray-700 hover:bg-gray-200 rounded-lg;
+    transition: all 0.3s ease;
+  }
+  
+  .hcp-nav-item:hover {
+    @apply bg-gradient-to-r from-green-400 to-teal-500 text-white;
+  }
+  
+  .hcp-logo {
+    background: linear-gradient(to right, #38ef7d, #11998e);
+    -webkit-background-clip: text;
+    color: transparent;
+  }
+  
