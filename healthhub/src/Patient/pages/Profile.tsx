@@ -1,6 +1,6 @@
 import { Card, Button } from '@nextui-org/react';
 import { FaEdit } from 'react-icons/fa';
-import { useAppContext } from '../../../Context/customHook';
+import { useAppContext } from '../../Context/customHook';
 
 const ProfilePage = () => {
      

@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { UserContext, AppContextType } from 'c:/Users/USER/Desktop/healthhubscheduler/Client/healthhub/Context/context';
+import { UserContext, AppContextType } from './context';
 
 const useAppContext = (): AppContextType => {
   const context = useContext(UserContext);

@@ -12,13 +12,13 @@ import HealthcareAndResources from "./Patient/pages/HealthCareResources";
 import ProfilePage from "./Patient/pages/Profile";
 import Settings from "./Patient/pages/Settings";
 import FAQPage from "./Patient/pages/faq";
-import { UserProvider } from "../Context/userContext";
 import DetailedResource from "./Patient/pages/Resources";
 import HCPLayout from "./layout/hcpLayout";
 import HCPProfile from "./hcp/pages/hcpProfile";
 import { ChakraProvider, extendTheme } from "@chakra-ui/react";
 import HCPAppointments from "./hcp/pages/hcpAppointments";
 import HCPAppointmentDetailsPage from "./hcp/pages/hcpAppointmentDetails";
+import { UserProvider } from "./Context/userContext";
 
 const mockAppointment = {
   id: 1,
@@ -46,8 +46,9 @@ const mockAppointment = {
     "Patient showed good improvement in blood pressure. Continue with the current medication and schedule a follow-up in 3 months.",
 };
 
-const PatientLayout = () => {
+const PatientLayout = () => {  
   return (
+
     <Layout>
       <Routes>
         <Route path="/dashboard" element={<Dashboard />} />

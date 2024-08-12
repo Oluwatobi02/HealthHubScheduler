@@ -4,7 +4,7 @@ import { Link, useLocation } from "react-router-dom";
 import { FaBell } from "react-icons/fa";
 import { useDisclosure } from "@nextui-org/react";
 import Notifications from "../components/Notifications";
-import { useAppContext } from "../../Context/customHook";
+import { useAppContext } from "../Context/customHook";
 
 const links = [
   { link: 'dashboard', title: 'Dashboard' },

@@ -6,7 +6,7 @@ import {
   DropdownTrigger,
 } from "@nextui-org/react";
 import { Link } from "react-router-dom";
-import {useAppContext} from "../../../Context/customHook";
+import {useAppContext} from "../../Context/customHook";
 
 const ProfileIcon = () => {
   const {user, logout} = useAppContext()

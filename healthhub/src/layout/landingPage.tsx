@@ -1,9 +1,9 @@
 import { Button, useDisclosure } from '@nextui-org/react';
 import { motion } from 'framer-motion';
 import { FaHeartbeat, FaUserMd, FaCalendarAlt, FaShieldAlt } from 'react-icons/fa';
-import LoginForm from '../auth/loginForm';
 import { useState } from 'react';
 import SignupForm from '../auth/signupForm';
+import LoginForm from '../auth/login';
 
 const LandingPage = () => {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
