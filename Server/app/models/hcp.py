@@ -24,6 +24,7 @@ class HealthCareProfessional(db.Document):
     name = db.StringField(required=True)
     specialization = db.StringField(required=True)
     time_slot = db.ListField(db.EmbeddedDocumentField(TimeSlot))
+    picture = db.StringField()
     created_at = db.DateTimeField(default=datetime.now())
     updated_at = db.DateTimeField(default=datetime.now())
     notifications = db.ListField(db.EmbeddedDocumentField(Notification))
@@ -35,6 +36,7 @@ class HealthCareProfessional(db.Document):
             "id": str(self.id),
             "email": self.email,
             "name": self.name,
+            "picture": self.picture,
             "specialization": self.specialization,
             "time_slot": [slot.to_dict() for slot in self.time_slot],
             "created_at": self.created_at,

@@ -25,7 +25,10 @@ class AppointmentService:
         return Appointment.objects(health_care_professional_id=hcp_id)
     
     @staticmethod
-    def get_patient_appointments(patient_id,skip,limit):
+    def get_patient_appointments(patient_id,skip,limit,get_all):
+        if get_all:
+            appointments = Appointment.objects(patient_id=patient_id).order_by('-date')
+            return [app.to_dict() for app in appointments]
         appointnments =  Appointment.objects(patient_id=patient_id).skip(skip).limit(limit).order_by('-date')
         return [app.to_dict() for app in appointnments]
     

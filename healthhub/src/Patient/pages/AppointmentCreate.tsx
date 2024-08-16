@@ -6,18 +6,19 @@ import { useNavigate } from 'react-router-dom';
 import { Input as SemanticInput, Dropdown } from 'semantic-ui-react';
 import { Appointment, HealthCareProfessional } from '../../types/types';
 import { useAppContext } from '../../Context/customHook';
+import { Toast } from '../../components/ui/toast';
 
 const CreateAppointment = () => {
   const {token} = useAppContext()
   const [professionals, setProfessionals] = useState<HealthCareProfessional[]>()
-  const [appointment, setAppointment] = useState<Appointment>({patient_id: '66a2ef8b07eae60ee8993d51' , health_care_professional_id:'66bc31816c28157232150188' })
+  const [appointment, setAppointment] = useState<Appointment>({patient_id: '66a2ef8b07eae60ee8993d51' })
   const [date, setDate] = useState<DateValue>();
   const [time, setTime] = useState('');
   const [disableButton, setDisableButton] = useState<boolean>(true)
   const navigate = useNavigate();
 
   const getHcp = async () => {
-    const res = await fetch('http://localhost:5000/healthcareprofessionals/', {
+    const res = await fetch('http://localhost:5000/healthcareprofessionals/?all=true', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -26,9 +27,8 @@ const CreateAppointment = () => {
       })
       const data = await res.json()
       setProfessionals(data)
-
   }
-const makeAppointment = async () => {
+const makeAppointment = async (resolve : (n: number) => void, reject: (n: number) => void) => {
   const res = await fetch('http://localhost:5000/appointments/', {
     method: 'POST',
     headers: {
@@ -40,12 +40,10 @@ const makeAppointment = async () => {
   const data = await res.json();
   console.log(data)
   if (data.success) {
-    // alert(data.message);
-    navigate('/dashboard');
+     resolve(200)
   }
   else {
-    setDisableButton(true)
-    alert(data.message)
+     reject(200)
   }
 }
 
@@ -63,6 +61,7 @@ const validateAppointment = () => {
     return true
   }
   return false
+  
 }
 
   return (
@@ -131,23 +130,17 @@ const validateAppointment = () => {
             />
           </div>
         </div>
-        <Button color='default' size='lg' className='w-full' onClick={validateAppointment}>
+        <Button color='default' size='lg' className='w-full' onClick={() => {
+          const valid = validateAppointment()
+          if (!valid) return
+          setDisableButton(false)
+        }}>
           Validate
         </Button>
-        {!disableButton && <Button
-          color="primary"
-          size="lg"
-          className="w-full"
-          disabled={disableButton}
-          onClick={() => {
-            const valid = validateAppointment()
-            if (!valid) return
-            console.log(appointment)
-            makeAppointment()
-          }}
-        >
-          Create Appointment
-        </Button>}
+        {!disableButton &&
+      <Toast promise={makeAppointment} label='Create Appointment'/>
+}
+        
       </Card>
     </div>
   );

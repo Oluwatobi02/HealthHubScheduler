@@ -1,29 +1,32 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Card } from '@nextui-org/react';
 import { Input as SemanticInput } from 'semantic-ui-react';
+import { HealthCareProfessional } from '../../types/types';
+import { useAppContext } from '../../Context/customHook';
 
-const professionals = [
-  { id: 1, name: 'Dr. John Doe', specialty: 'Cardiologist', photo: 'https://via.placeholder.com/50' },
-  { id: 2, name: 'Dr. Jane Smith', specialty: 'Dermatologist', photo: 'https://via.placeholder.com/50' },
-  { id: 3, name: 'Dr. Emily Johnson', specialty: 'Pediatrician', photo: 'https://via.placeholder.com/50' },
-  { id: 3, name: 'Dr. Emily Johnson', specialty: 'Pediatrician', photo: 'https://via.placeholder.com/50' },
-  { id: 3, name: 'Dr. Emily Johnson', specialty: 'Pediatrician', photo: 'https://via.placeholder.com/50' },
-  { id: 3, name: 'Dr. Emily Johnson', specialty: 'Pediatrician', photo: 'https://via.placeholder.com/50' },
-  { id: 3, name: 'Dr. Emily Johnson', specialty: 'Pediatrician', photo: 'https://via.placeholder.com/50' },
-  { id: 3, name: 'Dr. Emily Johnson', specialty: 'Pediatrician', photo: 'https://via.placeholder.com/50' },
-  { id: 3, name: 'Dr. Emily Johnson', specialty: 'Pediatrician', photo: 'https://via.placeholder.com/50' },
-  { id: 3, name: 'Dr. Emily Johnson', specialty: 'Pediatrician', photo: 'https://via.placeholder.com/50' },
-  { id: 3, name: 'Dr. Emily Johnson', specialty: 'Pediatrician', photo: 'https://via.placeholder.com/50' },
-  { id: 3, name: 'Dr. Emily Johnson', specialty: 'Pediatrician', photo: 'https://via.placeholder.com/50' },
-  { id: 3, name: 'Dr. Emily Johnson', specialty: 'Pediatrician', photo: 'https://via.placeholder.com/50' },
-];
 
 const ProfessionalsPage = () => {
+  const {token} = useAppContext()
   const [search, setSearch] = useState('');
-  const filteredProfessionals = professionals.filter((prof) =>
+  const [professionals, setProfessionals] = useState<HealthCareProfessional[]>()
+  const filteredProfessionals = professionals?.filter((prof) =>
     prof.name.toLowerCase().includes(search.toLowerCase())
   );
+const getProfessionals = async () => {
+  const res = await fetch('http://localhost:5000/healthcareprofessionals/?all=true', {
+    method: 'GET', 
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    }
+  })
+  const data = await res.json()
+  setProfessionals(data)
+}
 
+useEffect(() => {
+  getProfessionals()
+},[])
   return (
     <div className="min-h-screen bg-gray-100 p-8">
       <div className="container mx-auto">
@@ -43,18 +46,18 @@ const ProfessionalsPage = () => {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredProfessionals.length > 0 ? (
-            filteredProfessionals.map((prof, index) => (
+          {filteredProfessionals && filteredProfessionals.length > 0 ? (
+            filteredProfessionals?.map((prof, index) => (
               <Card key={index} className="shadow-lg rounded-lg bg-white">
                 <div className="p-4 flex items-center">
                   <img
-                    src={prof.photo}
+                    src={prof.picture}
                     alt={prof.name}
                     className="w-16 h-16 rounded-full mr-4"
                   />
                   <div>
                     <h3 className="text-xl font-semibold">{prof.name}</h3>
-                    <p className="text-sm text-gray-600">{prof.specialty}</p>
+                    <p className="text-sm text-gray-600">{prof.specialization}</p>
                   </div>
                 </div>
               </Card>

@@ -15,7 +15,7 @@ import FAQPage from "./Patient/pages/faq";
 import DetailedResource from "./Patient/pages/Resources";
 import HCPLayout from "./layout/hcpLayout";
 import HCPProfile from "./hcp/pages/hcpProfile";
-import { ChakraProvider, extendTheme } from "@chakra-ui/react";
+import { ChakraBaseProvider, ChakraProvider, extendTheme, theme, useColorMode } from "@chakra-ui/react";
 import HCPAppointments from "./hcp/pages/hcpAppointments";
 import HCPAppointmentDetailsPage from "./hcp/pages/hcpAppointmentDetails";
 import { UserProvider } from "./Context/userContext";
@@ -49,7 +49,6 @@ const mockAppointment = {
 
 const PatientLayout = () => {  
   return (
-
     <Layout>
       <Routes>
         <Route path="/dashboard" element={<Dashboard />} />

@@ -13,5 +13,7 @@ def create_hcp():
 
 @hcp_bp.route('/')
 def get_all_hcps():
-    hcps = HealthCareProfessional.objects()
+    get_all = request.args.get('all', 'false') == 'true'
+    if get_all:
+        hcps = HealthCareProfessional.objects()
     return jsonify([hcp.to_dict() for hcp in hcps])

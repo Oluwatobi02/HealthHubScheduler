@@ -1,43 +1,29 @@
-import React, { SyntheticEvent, useState } from 'react';
+import React, { SyntheticEvent, useEffect, useState } from 'react';
 import 'semantic-ui-css/semantic.min.css';
 import { Card, Icon, Button, Divider, List, Modal, Header, Loader, Input, Dropdown, DropdownProps } from 'semantic-ui-react';
 import { useNavigate } from 'react-router-dom';
 import { FaPlus, FaCalendarAlt, FaMapMarkerAlt, FaUserMd, FaSearch, FaCalendarDay, FaDownload, FaEllipsisH } from 'react-icons/fa';
 import { motion } from 'framer-motion';
-import { Calendar, } from '@nextui-org/react';
-interface selectedAppointment {
-  id: number;
-  doctor: string;
-  date: string;
-  time: string;
-  location: string;
-  type: string;
-  status: string;
-}
-const mockData = {
-  appointments: [
-    { id: 1, doctor: 'Dr. John Doe', date: '2024-08-01', time: '10:00 AM', location: 'Room 301', type: 'Routine Check-up', status: 'upcoming' },
-    { id: 2, doctor: 'Dr. Jane Smith', date: '2024-08-05', time: '02:00 PM', location: 'Room 204', type: 'Consultation', status: 'upcoming' },
-    { id: 3, doctor: 'Dr. Alice Johnson', date: '2024-07-20', time: '09:30 AM', location: 'Room 112', type: 'Follow-up', status: 'past' },
-    { id: 4, doctor: 'Dr. Michael Brown', date: '2024-07-25', time: '01:00 PM', location: 'Room 405', type: 'Specialist Consultation', status: 'past' },
-    // Add more data to demonstrate "load more" functionality
-  ],
-};
+import { Calendar, Spinner, } from '@nextui-org/react';
+import { useAppContext } from '../../Context/customHook';
+import {  FAppointment } from '../../types/types';
 
 const AppointmentPage = () => {
   const [showMore, setShowMore] = useState(false);
   const [loading, setLoading] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
-  const [selectedAppointment, setSelectedAppointment] = useState<selectedAppointment>();
+  const [selectedAppointment, setSelectedAppointment] = useState<FAppointment>();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('All');
   const [showCalendar, setShowCalendar] = useState(false);
   const navigate = useNavigate();
+  const [appointments, setAppointments] = useState<FAppointment[]>()
+  const {user, token} = useAppContext()
 
   const filterOptions = ['All', 'Upcoming', 'Past'];
-  const filteredAppointments = mockData.appointments
-    .filter(appointment => filterType === 'All' || appointment.status === filterType.toLowerCase())
-    .filter(appointment => appointment.date.includes(searchTerm) || appointment.doctor.toLowerCase().includes(searchTerm.toLowerCase()));
+  const filteredAppointments = appointments?.
+  filter(appointment => filterType === 'All' || appointment.status === filterType.toLowerCase()).
+  filter(appointment => appointment.date?.includes(searchTerm) || appointment.health_care_professional.name?.toLowerCase().includes(searchTerm.toLowerCase()));
 
   const handleLoadMore = () => {
     setLoading(true);
@@ -59,11 +45,28 @@ const AppointmentPage = () => {
     }
   }
 
-  const handleAppointmentClick = (appointment : selectedAppointment) => {
+  const handleAppointmentClick = (appointment : FAppointment) => {
     setSelectedAppointment(appointment);
     setModalOpen(true);
   };
+  const getAppointment = async () => {
+    const res = await fetch(`http://localhost:5000/appointments/?patientid=${user.id}&all=true`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
+    })
+    const data = await res.json()
+    setAppointments(data.appointments)
+  }
+  useEffect(() => {
+    getAppointment()
+  },[])
 
+  if (!appointments) {
+    return <Spinner color='success' size="lg" className='w-full ml-auto mt-4'/>;
+  }
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <header className="flex justify-between items-center mb-8">
@@ -129,7 +132,7 @@ const AppointmentPage = () => {
             </Card.Header>
             <Divider />
             <List divided relaxed>
-              {filteredAppointments.slice(0, showMore ? filteredAppointments.length : 5).map(appointment => (
+              {filteredAppointments?.slice(0, showMore ? filteredAppointments.length : 5).map(appointment => (
                 <motion.div
                   key={appointment.id}
                   initial={{ opacity: 0, y: 20 }}
@@ -140,11 +143,11 @@ const AppointmentPage = () => {
                     <List.Content>
                       <div className="flex items-center mb-1">
                         <FaCalendarDay className="text-gray-500 mr-2" />
-                        <strong>Date & Time:</strong> {appointment.date} at {appointment.time}
+                        <strong>Date & Time:</strong> {appointment.date}
                       </div>
                       <div className="flex items-center mb-1">
                         <FaUserMd className="text-gray-500 mr-2" />
-                        <strong>Doctor:</strong> {appointment.doctor}
+                        <strong>Doctor:</strong> {appointment.health_care_professional.name}
                       </div>
                       <div className="flex items-center mb-1">
                         <FaMapMarkerAlt className="text-gray-500 mr-2" />
@@ -166,7 +169,7 @@ const AppointmentPage = () => {
                   </List.Item>
                 </motion.div>
               ))}
-              {filteredAppointments.length > 5 && !showMore && (
+              {filteredAppointments && filteredAppointments.length > 5 && !showMore && (
                 <List.Item className="py-4 flex justify-center items-center">
                   <Button
                     color="teal"
@@ -201,8 +204,8 @@ const AppointmentPage = () => {
           <Header icon='info circle' content='Appointment Details' />
           <Modal.Content>
             <div className="text-center mb-4">
-              <h2 className="text-2xl font-semibold text-gray-800">{selectedAppointment.date} at {selectedAppointment.time}</h2>
-              <p className="text-gray-600 mt-2"><strong>Doctor:</strong> {selectedAppointment.doctor}</p>
+              <h2 className="text-2xl font-semibold text-gray-800">{selectedAppointment.date}</h2>
+              <p className="text-gray-600 mt-2"><strong>Doctor:</strong> {selectedAppointment.health_care_professional.name}</p>
               <p className="text-gray-600"><strong>Location:</strong> {selectedAppointment.location}</p>
               <p className="text-gray-600"><strong>Type:</strong> {selectedAppointment.type}</p>
             </div>

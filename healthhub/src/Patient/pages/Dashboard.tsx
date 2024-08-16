@@ -5,6 +5,7 @@ import { useAppContext } from '../../Context/customHook';
 import { useEffect, useRef, useState } from 'react';
 import { FAppointment } from '../../types/types';
 import { formatDate } from '../../api/utils';
+import { Spinner } from '@nextui-org/react';
 
 const mockData = {
   healthSummary: 'Summary of recent reports or visits, including health alerts, updates on chronic conditions, and recommendations from your healthcare provider.',
@@ -26,19 +27,22 @@ const Dashboard = () => {
   const navigate = useNavigate();
 
   const loadAppointments = async () => {
-    setLoading(true)
-    const res = await fetch(`http://localhost:5000/appointments/${user.id}?page=${page}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      }
-    })
-    const data = await res.json()
-    setAppointments((prev) => [...prev, ...data.appointments])
-    setHasMore(data.has_more)
-    setLoading(false)
-  } 
+      setLoading(true)
+      await setTimeout(async() =>{
+      }, 3000)
+      const res = await fetch(`http://localhost:5000/appointments/?patientid=${user.id}&page=${page}&all=false`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      const data = await res.json()
+
+      setAppointments((prev) => [...prev, ...data.appointments])
+      setHasMore(data.has_more)
+      setLoading(false)
+    } 
   const handleScroll = () => {
   
     if (appointmentRef.current === null || !hasMore) return;
@@ -47,14 +51,19 @@ const Dashboard = () => {
   
     if (isBottom && hasMore) {
       console.log('Reached bottom, loading next page...');
+      
       setPage((prev) => prev + 1);
     }
   };
   
   useEffect(() => {
     if (!hasMore) return;
-    loadAppointments()
-  },[page])
+
+     loadAppointments()
+        
+    
+        
+    },[page])
 
   useEffect(() => {
     const ref = appointmentRef.current
@@ -81,7 +90,7 @@ const Dashboard = () => {
               Upcoming Appointments
             </Card.Header>
             <Card.Description>
-              <div className="overflow-y-auto" style={{ maxHeight: '200px' }} ref={appointmentRef}>
+              <div className="overflow-y-auto flex flex-col" style={{ maxHeight: '200px' }} ref={appointmentRef}>
                 <ul className="list-none p-0">
                   {appointments.map((appointment, index) => (
                     <li key={index} className="border-b border-gray-200 py-4 flex justify-between items-start">
@@ -93,8 +102,9 @@ const Dashboard = () => {
                       </div>
                     </li>
                   ))}
-                  {loading && <div className="text-center text-gray-600">Loading...</div>}
+                  {loading &&  <Spinner color='success' size="lg" className='w-full ml-auto mt-4'/>}
                   {!hasMore && <div className="text-center text-gray-600">No more appointments</div>}
+
                 </ul>
               </div>
             </Card.Description>

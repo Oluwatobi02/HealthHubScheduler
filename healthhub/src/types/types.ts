@@ -46,10 +46,12 @@ export interface Appointment {
     prescriptions?: Prescription[];
     notes?: string;
     status?: string;
+    location?: string;
     receptionist?: string;
     created_at?: string;
     updated_at?: string;
 }
+
 
 export interface Prescription {
     _id: string;
@@ -121,3 +123,8 @@ export interface WebSocketContextType {
     emitEvent: (event: string, data: any) => void;
   }
 export type WebSocketEvent = 'new_appointment' | 'update_appointment' | 'notification';
+
+export interface ToastProps {
+    promise: (resolve : (n : number) => void, reject : (n : number) => void) => void;
+    label: string;
+}
