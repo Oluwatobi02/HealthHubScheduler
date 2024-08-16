@@ -9,7 +9,18 @@ db = MongoEngine()
 class Notification(db.EmbeddedDocument):
     id = db.StringField(default=str(uuid.uuid4()), required=True, unique=True)
     message = db.StringField(required=True)
+    tag = db.StringField(required=True)
     created_at = db.DateTimeField(required=True)
+
+    
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "message": self.message,
+            "tag": self.tag,
+            "created_at": self.created_at
+        }
+
 
 class BasicInfo(db.EmbeddedDocument):
     home_number = db.StringField(required=True)
@@ -46,21 +57,17 @@ class Patient(db.Document):
 
 
     
-    def add_notification(self, message):
-        notification = Notification(message=message, created_at=datetime.now())
+    def add_notification(self, message, tag):
+        notification = Notification(message=message, tag=tag, created_at=datetime.now())
         self.notifications.append(notification)
 
     # def view_appointments()
-
-
-    
-        
-    
-
-
+    def notifications_to_dict(self):
+        return [noti.to_dict() for noti in self.notifications]
 
     def to_dict(self):
         return {
+            "id": str(self.id),
             "email": self.email,
             "name": self.name,
             "medical_record": {
@@ -85,7 +92,6 @@ class Patient(db.Document):
                     "medical_problems": self.medical_record.medical_history.medical_problems
                 }
             },
-            "notifications": self.notifications[-1::-1]
         }
 
     def set_password(self, password):

@@ -1,46 +1,71 @@
 import { Card, Icon, Button } from 'semantic-ui-react';
 import { FaPlus, FaComment } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import { useAppContext } from '../../Context/customHook';
+import { useEffect, useRef, useState } from 'react';
+import { FAppointment } from '../../types/types';
+import { formatDate } from '../../api/utils';
 
 const mockData = {
-  appointments: [
-    { id: 1, doctor: 'Dr. John Doe', date: '2024-08-01', time: '10:00 AM', location: 'Room 301', type: 'Routine Check-up'},
-    { id: 2, doctor: 'Dr. Jane Smith', date: '2024-08-05', time: '02:00 PM', location: 'Room 204', type: 'Consultation' },
-    { id: 3, doctor: 'Dr. Alice Johnson', date: '2024-08-10', time: '09:30 AM', location: 'Room 112', type: 'Follow-up' },
-    { id: 4, doctor: 'Dr. Michael Brown', date: '2024-08-15', time: '01:00 PM', location: 'Room 405', type: 'Specialist Consultation' },
-    { id: 5, doctor: 'Dr. Angela White', date: '2024-08-20', time: '11:00 AM', location: 'Room 202', type: 'Routine Check-up' },
-    { id: 6, doctor: 'Dr. Robert Green', date: '2024-08-25', time: '03:00 PM', location: 'Room 309', type: 'Follow-up' },
-  ],
   healthSummary: 'Summary of recent reports or visits, including health alerts, updates on chronic conditions, and recommendations from your healthcare provider.',
   articles: [
     { id: 1, title: 'How to Maintain a Healthy Lifestyle', content: 'Maintaining a healthy lifestyle involves balanced nutrition, regular physical activity, adequate sleep, and stress management.' },
     { id: 2, title: 'The Importance of Regular Check-ups', content: 'Regular check-ups help in early detection and prevention of potential health issues. They also provide an opportunity for preventive care.' },
     { id: 3, title: 'Managing Chronic Conditions Effectively', content: 'Effective management of chronic conditions includes regular monitoring, medication adherence, lifestyle changes, and regular consultations with healthcare providers.' },
-    { id: 4, title: 'Understanding Your Lab Results', content: 'Understanding lab results is crucial for assessing your health status. This guide will help you interpret common lab results and what they mean for your health.' },
-    { id: 4, title: 'Understanding Your Lab Results', content: 'Understanding lab results is crucial for assessing your health status. This guide will help you interpret common lab results and what they mean for your health.' },
-    { id: 4, title: 'Understanding Your Lab Results', content: 'Understanding lab results is crucial for assessing your health status. This guide will help you interpret common lab results and what they mean for your health.' },
-    { id: 4, title: 'Understanding Your Lab Results', content: 'Understanding lab results is crucial for assessing your health status. This guide will help you interpret common lab results and what they mean for your health.' },
-    { id: 4, title: 'Understanding Your Lab Results', content: 'Understanding lab results is crucial for assessing your health status. This guide will help you interpret common lab results and what they mean for your health.' },
-    { id: 4, title: 'Understanding Your Lab Results', content: 'Understanding lab results is crucial for assessing your health status. This guide will help you interpret common lab results and what they mean for your health.' },
-    { id: 4, title: 'Understanding Your Lab Results', content: 'Understanding lab results is crucial for assessing your health status. This guide will help you interpret common lab results and what they mean for your health.' },
-    { id: 4, title: 'Understanding Your Lab Results', content: 'Understanding lab results is crucial for assessing your health status. This guide will help you interpret common lab results and what they mean for your health.' },
-    { id: 4, title: 'Understanding Your Lab Results', content: 'Understanding lab results is crucial for assessing your health status. This guide will help you interpret common lab results and what they mean for your health.' },
-    { id: 4, title: 'Understanding Your Lab Results', content: 'Understanding lab results is crucial for assessing your health status. This guide will help you interpret common lab results and what they mean for your health.' },
+     { id: 4, title: 'Understanding Your Lab Results', content: 'Understanding lab results is crucial for assessing your health status. This guide will help you interpret common lab results and what they mean for your health.' },
   ],
 };
 
 const Dashboard = () => {
+  const {user, token} = useAppContext()
+  const [appointments, setAppointments] = useState<FAppointment[]>([]);
+  const [page, setPage] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const appointmentRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
-  const formatDate = (dateString : string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      weekday: 'short',
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
+  const loadAppointments = async () => {
+    setLoading(true)
+    const res = await fetch(`http://localhost:5000/appointments/${user.id}?page=${page}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
+    })
+    const data = await res.json()
+    setAppointments((prev) => [...prev, ...data.appointments])
+    setHasMore(data.has_more)
+    setLoading(false)
+  } 
+  const handleScroll = () => {
+  
+    if (appointmentRef.current === null || !hasMore) return;
+  
+    const isBottom = appointmentRef.current.scrollTop + appointmentRef.current.clientHeight >= appointmentRef.current.scrollHeight - 10;
+  
+    if (isBottom && hasMore) {
+      console.log('Reached bottom, loading next page...');
+      setPage((prev) => prev + 1);
+    }
   };
+  
+  useEffect(() => {
+    if (!hasMore) return;
+    loadAppointments()
+  },[page])
+
+  useEffect(() => {
+    const ref = appointmentRef.current
+    if (ref) {
+      ref.addEventListener('scroll', handleScroll);
+    }
+    return  () => {
+      ref?.removeEventListener('scroll', handleScroll)
+    }
+  },[appointmentRef.current])
+
 
   return (
     <div className="min-h-screen bg-green-50 p-8">
@@ -56,18 +81,20 @@ const Dashboard = () => {
               Upcoming Appointments
             </Card.Header>
             <Card.Description>
-              <div className="overflow-y-auto" style={{ maxHeight: '200px' }}>
+              <div className="overflow-y-auto" style={{ maxHeight: '200px' }} ref={appointmentRef}>
                 <ul className="list-none p-0">
-                  {mockData.appointments.map((appointment, index) => (
+                  {appointments.map((appointment, index) => (
                     <li key={index} className="border-b border-gray-200 py-4 flex justify-between items-start">
                       <div className="text-lg font-medium text-gray-800" onClick={() => navigate('/appointments/dd')}>
-                        {formatDate(appointment.date)} at {appointment.time}
+                        {formatDate(appointment.date)}
                       </div>
                       <div className="text-sm text-gray-600">
-                        {appointment.type} with {appointment.doctor} in {appointment.location}
+                        appointment with {appointment.health_care_professional.name} for {appointment.reason}
                       </div>
                     </li>
                   ))}
+                  {loading && <div className="text-center text-gray-600">Loading...</div>}
+                  {!hasMore && <div className="text-center text-gray-600">No more appointments</div>}
                 </ul>
               </div>
             </Card.Description>

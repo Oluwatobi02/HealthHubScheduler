@@ -19,7 +19,7 @@ interface LayoutProps {
 
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
-  const {user, isAuthenticated} = useAppContext()
+  const { isAuthenticated} = useAppContext()
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
   const location = useLocation();
 
@@ -53,10 +53,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         <div className="flex gap-6">
         <div className="relative inline-block cursor-pointer">
           <FaBell className="text-2xl" onClick={onOpen}/>  
-        <span className="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 bg-red-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-          {user?.notifications.length}
-        </span>
-        <Notifications isOpen={isOpen} onOpenChange={onOpenChange} notis={user?.notifications} />
+        
+        <Notifications isOpen={isOpen} onOpenChange={onOpenChange} onOpen={onOpen} />
           </div>
           {isAuthenticated && <ProfileIcon />}
 

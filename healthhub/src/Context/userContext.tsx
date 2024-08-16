@@ -19,7 +19,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   useEffect(() => {
     localStorage.setItem('user', JSON.stringify(user));
     localStorage.setItem('token', token);
-  }, [user, token]);
+  }, [token]);
   const login = async (email: string, password: string, isStaff: boolean) => {
     const res = await fetch("http://localhost:5000/auth/login", {
       method: "POST",

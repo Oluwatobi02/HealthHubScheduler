@@ -19,6 +19,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { FaBars, FaSun, FaMoon, FaCalendar, FaPlus, FaAddressBook } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
 interface LayoutProps {
   children: ReactNode;
@@ -26,6 +27,7 @@ interface LayoutProps {
 
 const HCPLayout: React.FC<LayoutProps> = ({ children }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const navigate = useNavigate()
   const { toggleColorMode } = useColorMode();
   const colorModeIcon = useColorModeValue(FaSun, FaMoon);
   const bg = useColorModeValue('gray.100', 'gray.900');
@@ -49,12 +51,12 @@ const HCPLayout: React.FC<LayoutProps> = ({ children }) => {
             <DrawerHeader>Navigation</DrawerHeader>
             <DrawerBody>
               <VStack align="stretch" spacing="4">
-                <Button leftIcon={<FaCalendar />} variant="ghost" justifyContent="flex-start">Dashboard</Button>
-                <Button leftIcon={<FaCalendar />} variant="ghost" justifyContent="flex-start">Appointments</Button>
-                <Button leftIcon={<FaAddressBook />} variant="ghost" justifyContent="flex-start">Profile</Button>
-                <Button leftIcon={<FaCalendar />} variant="ghost" justifyContent="flex-start">Help & Feedback</Button>
-                <Button leftIcon={<FaCalendar />} variant="ghost" justifyContent="flex-start">Resources</Button>
-                <Button leftIcon={<FaPlus />} variant="ghost" justifyContent="flex-start">New Appointment</Button>
+                <Button leftIcon={<FaCalendar />} variant="ghost" justifyContent="flex-start" onClick={() => navigate('/hcp/dashboard')}>Dashboard</Button>
+                <Button leftIcon={<FaCalendar />} variant="ghost" justifyContent="flex-start"onClick={() => navigate('/hcp/appointments')}>Appointments</Button>
+                <Button leftIcon={<FaAddressBook />} variant="ghost" justifyContent="flex-start" onClick={() => navigate('/hcp/profile')}>Profile</Button>
+                <Button leftIcon={<FaCalendar />} variant="ghost" justifyContent="flex-start" onClick={() => navigate('/hcp/faq')}>Help & Feedback</Button>
+                <Button leftIcon={<FaCalendar />} variant="ghost" justifyContent="flex-start" onClick={() => navigate('/hcp/resources')}>Resources</Button>
+                <Button leftIcon={<FaPlus />} variant="ghost" justifyContent="flex-start" onClick={() => navigate('/hcp/appointmentcreate')}>New Appointment</Button>
               </VStack>
             </DrawerBody>
           </DrawerContent>

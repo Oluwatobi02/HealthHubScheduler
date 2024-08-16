@@ -9,8 +9,8 @@ import {
     Input,
   } from "@nextui-org/react";
   import { useAppContext } from "../Context/customHook";
-  import React from "react";
   import { Link } from "react-router-dom";
+import { useState } from "react";
   
   interface LoginFormProps {
     isOpen: boolean;
@@ -18,9 +18,9 @@ import {
   }
   
   const LoginForm = ({ isOpen, onOpenChange }: LoginFormProps) => {
-    const [email, setEmail] = React.useState("");
-    const [password, setPassword] = React.useState("");
-    const [isStaff, setIsStaff] = React.useState(false);
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [isStaff, setIsStaff] = useState(false);
     const { login, message } = useAppContext();
   
     const validate = () => {

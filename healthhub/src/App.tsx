@@ -19,6 +19,7 @@ import { ChakraProvider, extendTheme } from "@chakra-ui/react";
 import HCPAppointments from "./hcp/pages/hcpAppointments";
 import HCPAppointmentDetailsPage from "./hcp/pages/hcpAppointmentDetails";
 import { UserProvider } from "./Context/userContext";
+import { WebSocketProvider } from "./Context/wsProvider";
 
 const mockAppointment = {
   id: 1,
@@ -73,6 +74,7 @@ function App() {
   return (
     <>
       <BrowserRouter>
+      <WebSocketProvider>
         <UserProvider>
           <Routes>
             <Route path="/" element={<LandingPage />} />
@@ -82,6 +84,8 @@ function App() {
             <Route path="/*" element={<PatientLayout />} />
           </Routes>
         </UserProvider>
+      </WebSocketProvider>
+        
       </BrowserRouter>
     </>
   );

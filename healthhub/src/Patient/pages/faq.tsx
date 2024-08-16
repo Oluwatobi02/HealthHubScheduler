@@ -44,7 +44,6 @@ const FAQPage = () => {
                 aria-label={faq.question}
                 className="w-full text-left flex justify-between items-center py-4 px-6 bg-gray-100 hover:bg-gray-200 rounded-lg"
                 onClick={() => handleToggle(index)}
-                // iconRight={activeIndex === index ? <FaChevronUp /> : <FaChevronDown />}
               >
                 <span className="font-semibold">{faq.question}</span>
               </Button>

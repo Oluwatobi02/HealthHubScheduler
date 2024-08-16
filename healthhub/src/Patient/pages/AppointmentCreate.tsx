@@ -1,36 +1,69 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button, Card, DateValue } from '@nextui-org/react';
 import { DatePicker } from '@nextui-org/react';
 import { FaClock } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { Input as SemanticInput, Dropdown } from 'semantic-ui-react';
+import { Appointment, HealthCareProfessional } from '../../types/types';
+import { useAppContext } from '../../Context/customHook';
 
-const professionals = [
-  { id: 1, name: 'Dr. John Doe', specialty: 'Cardiologist', photo: 'https://via.placeholder.com/50' },
-  { id: 2, name: 'Dr. Jane Smith', specialty: 'Dermatologist', photo: 'https://via.placeholder.com/50' },
-  { id: 3, name: 'Dr. Emily Johnson', specialty: 'Pediatrician', photo: 'https://via.placeholder.com/50' },
-  { id: 3, name: 'Dr. Emily Johnson', specialty: 'Pediatrician', photo: 'https://via.placeholder.com/50' },
-  { id: 3, name: 'Dr. Emily Johnson', specialty: 'Pediatrician', photo: 'https://via.placeholder.com/50' },
-  { id: 3, name: 'Dr. Emily Johnson', specialty: 'Pediatrician', photo: 'https://via.placeholder.com/50' },
-  { id: 3, name: 'Dr. Emily Johnson', specialty: 'Pediatrician', photo: 'https://via.placeholder.com/50' },
-  { id: 3, name: 'Dr. Emily Johnson', specialty: 'Pediatrician', photo: 'https://via.placeholder.com/50' },
-  { id: 3, name: 'Dr. Emily Johnson', specialty: 'Pediatrician', photo: 'https://via.placeholder.com/50' },
-  { id: 3, name: 'Dr. Emily Johnson', specialty: 'Pediatrician', photo: 'https://via.placeholder.com/50' },
-  { id: 3, name: 'Dr. Emily Johnson', specialty: 'Pediatrician', photo: 'https://via.placeholder.com/50' },
-  { id: 3, name: 'Dr. Emily Johnson', specialty: 'Pediatrician', photo: 'https://via.placeholder.com/50' },
-  { id: 3, name: 'Dr. Emily Johnson', specialty: 'Pediatrician', photo: 'https://via.placeholder.com/50' },
-  { id: 3, name: 'Dr. Emily Johnson', specialty: 'Pediatrician', photo: 'https://via.placeholder.com/50' },
-  { id: 3, name: 'Dr. Emily Johnson', specialty: 'Pediatrician', photo: 'https://via.placeholder.com/50' },
-  { id: 3, name: 'Dr. Emily Johnson', specialty: 'Pediatrician', photo: 'https://via.placeholder.com/50' },
-  { id: 3, name: 'Dr. Emily Johnson', specialty: 'Pediatrician', photo: 'https://via.placeholder.com/50' },
-];
 const CreateAppointment = () => {
-
-  const [date, setDate] = useState<DateValue | null>(null);
+  const {token} = useAppContext()
+  const [professionals, setProfessionals] = useState<HealthCareProfessional[]>()
+  const [appointment, setAppointment] = useState<Appointment>({patient_id: '66a2ef8b07eae60ee8993d51' , health_care_professional_id:'66bc31816c28157232150188' })
+  const [date, setDate] = useState<DateValue>();
   const [time, setTime] = useState('');
+  const [disableButton, setDisableButton] = useState<boolean>(true)
   const navigate = useNavigate();
 
+  const getHcp = async () => {
+    const res = await fetch('http://localhost:5000/healthcareprofessionals/', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      })
+      const data = await res.json()
+      setProfessionals(data)
 
+  }
+const makeAppointment = async () => {
+  const res = await fetch('http://localhost:5000/appointments/', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(appointment),
+  });
+  const data = await res.json();
+  console.log(data)
+  if (data.success) {
+    // alert(data.message);
+    navigate('/dashboard');
+  }
+  else {
+    setDisableButton(true)
+    alert(data.message)
+  }
+}
+
+useEffect(() => {
+  getHcp()
+}, [])
+
+const validateAppointment = () => {
+  if (!date || !time || !appointment?.health_care_professional_id || !appointment?.reason) return false
+  const datePicked = new Date(date.year, date.month-1, date?.day, Number(time.split(':')[0]), Number(time.split(':')[1]))
+  const valid = Date.now() < datePicked.getTime()
+  if (valid) {
+    setAppointment({...appointment, date: datePicked.toISOString()})
+    setDisableButton(false)
+    return true
+  }
+  return false
+}
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-8">
@@ -65,22 +98,23 @@ const CreateAppointment = () => {
             <p className="block text-sm font-medium text-gray-700 mb-2">Professional</p>
             <Dropdown
               selection
-              options={professionals.map((prof, index) => ({
+              onChange={(e,data) => setAppointment({...appointment, health_care_professional_id: String(data.value)})}
+              options={professionals?.map((prof, index) => ({
                 key: index,
                 value: prof.id,
                 text: (
                   <div className="flex items-center">
                     <img
-                      src={prof.photo}
+                      src='https://via.placeholder.com/50'
                       alt={prof.name}
                       className="w-8 h-8 rounded-full mr-2"
                     />
                     <div>
                       <div className="font-semibold">{prof.name}</div>
-                      <div className="text-sm text-gray-600">{prof.specialty}</div>
+                      <div className="text-sm text-gray-600">{prof.specialization}</div>
                     </div>
                   </div>
-                ),
+                )
               }))}
               className="w-full"
               placeholder="Select Professional"
@@ -93,18 +127,27 @@ const CreateAppointment = () => {
               aria-label="Reason"
               placeholder="Enter Reason for Appointment"
               className="border border-gray-300 rounded-lg p-2 w-full"
+              onChange={(e) => setAppointment({...appointment, reason: e.target.value})}
             />
           </div>
         </div>
-
-        <Button
+        <Button color='default' size='lg' className='w-full' onClick={validateAppointment}>
+          Validate
+        </Button>
+        {!disableButton && <Button
           color="primary"
           size="lg"
           className="w-full"
-          onClick={() => navigate('/appointments')}
+          disabled={disableButton}
+          onClick={() => {
+            const valid = validateAppointment()
+            if (!valid) return
+            console.log(appointment)
+            makeAppointment()
+          }}
         >
           Create Appointment
-        </Button>
+        </Button>}
       </Card>
     </div>
   );

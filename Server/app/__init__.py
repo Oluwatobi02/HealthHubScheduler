@@ -1,8 +1,7 @@
-# app/__init__.py
 from flask import Flask
 from flask_cors import CORS
 from .config import Config
-from .extensions import db, jwt
+from .extensions import db, jwt,socketio
 from .routes import register_routes
 from dotenv import load_dotenv
 
@@ -16,6 +15,10 @@ def create_app():
 
     db.init_app(app)
     jwt.init_app(app)
+    socketio.init_app(app)
+    
+    
+    
 
     register_routes(app)
 
