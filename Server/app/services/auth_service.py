@@ -17,7 +17,7 @@ class AuthService:
             medical_record = MedicalRecord(basic_info=basic_inf, emergency_contact=emergency_cont, medical_history=medical_hist)
             patient = Patient(email=email, name=name, medical_record=medical_record)
             patient.set_password(password)
-            patient.add_notification("Welcome to HealthHub")
+            patient.add_notification("Welcome to HealthHub", 'message')
             patient.save()
             return True
         except:

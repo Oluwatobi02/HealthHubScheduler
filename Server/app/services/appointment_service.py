@@ -6,16 +6,16 @@ class AppointmentService:
 
     @staticmethod
     def create_appointment(appointment):
-        patient_appointment = Appointment(
-            patient_id = appointment['patient_id'], 
-            health_care_professional_id=appointment['health_care_professional_id'],
-            date = helper.convert_date(appointment['date']),
-            reason = appointment['reason']
-            )
         try:
+            patient_appointment = Appointment(
+                patient_id = appointment['patient_id'], 
+                health_care_professional_id=appointment['health_care_professional_id'],
+                date = helper.convert_date(appointment['date']),
+                reason = appointment['reason']
+                )
             patient_appointment.save()
             patient = Patient.objects(id=appointment['patient_id']).first()
-            patient.add_notification(f"Appointment created successfully for {appointment['date']} ", "Appointments")
+            patient.add_notification(f"Appointment created successfully for {helper.revert_date_to_readable_string(appointment['date'])}", "Appointments")
             patient.save()        
         except: 
             return False

@@ -1,6 +1,7 @@
 from flask_mongoengine import MongoEngine
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
+from app.utils import helper
 import uuid
 
 db = MongoEngine()
@@ -18,7 +19,7 @@ class Notification(db.EmbeddedDocument):
             "id": self.id,
             "message": self.message,
             "tag": self.tag,
-            "created_at": self.created_at
+            "created_at": helper.revert_date_to_readable_string(self.created_at)
         }
 
 

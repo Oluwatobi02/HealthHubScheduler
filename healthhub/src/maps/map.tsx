@@ -11,12 +11,14 @@ import { useEffect, useRef, useState } from 'react';
 import { formatted, } from './people';
 
 const GMap = () => {
+    const apikey = import.meta.env.GOOGLE_API_KEY
+    const mapId = import.meta.env.GOOGLE_MAP_ID
     const position = { lat: 6.5283, lng: 3.3864 };
     const [open, setOpen] = useState(false)
     return (
         <div style={{ height: "100vh", width: '100%' }}>
-            <APIProvider apiKey='AIzaSyBL3Es--QBC8t-FtCq4HunRy91oxObiir0' >
-                <Map defaultZoom={11} center={position} mapId='9bec391a24a195fb'>
+            <APIProvider apiKey={apikey} >
+                <Map defaultZoom={11} center={position} mapId={mapId}>
                     <AdvancedMarker position={position} onClick={() => setOpen(true)}>
                     <Pin background={"grey"} borderColor={'blue'} glyphColor={'yellow'} />
 

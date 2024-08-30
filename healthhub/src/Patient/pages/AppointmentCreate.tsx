@@ -8,9 +8,9 @@ import { useAppContext } from '../../Context/customHook';
 import { Toast } from '../../components/ui/toast';
 
 const CreateAppointment = () => {
-  const {token} = useAppContext()
+  const {token, user} = useAppContext()
   const [professionals, setProfessionals] = useState<HealthCareProfessional[]>()
-  const [appointment, setAppointment] = useState<Appointment>({patient_id: '66a2ef8b07eae60ee8993d51' })
+  const [appointment, setAppointment] = useState<Appointment>({patient_id: user.id })
   const [date, setDate] = useState<DateValue>();
   const [time, setTime] = useState('');
   const [disableButton, setDisableButton] = useState<boolean>(true)

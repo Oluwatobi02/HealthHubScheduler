@@ -30,7 +30,7 @@ const NotificationItem = ({ notification }: NotificationItemProps) => {
     <div className={`p-4 border-b bg-white"}`}>
       <div className="flex justify-between items-center">
         <h5 className="cursor-pointer text-lg font-medium">
-          Notification Title
+          {notification.tag}
         </h5>
 
         <span className="bg-red-600 text-white text-xs rounded-full px-2 py-1">
@@ -50,7 +50,6 @@ const Notifications = ({ isOpen, onOpenChange, onOpen }: NotificationsProps) => 
 
   useEffect(() => {
     registerEvent("notification", (data : boolean) => {
-      console.log(data)
       setNotiDep((prev) => !prev)
     })
   },[registerEvent])
@@ -59,7 +58,7 @@ const Notifications = ({ isOpen, onOpenChange, onOpen }: NotificationsProps) => 
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+        'Authorization': `Bearer ${token}`,
       },
     });
     const data = await res.json();

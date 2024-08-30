@@ -48,10 +48,8 @@ import { useState } from "react";
                   label="Email"
                   placeholder="Enter your email"
                   variant="bordered"
-                  // value={email}
                   onChange={(e) => {
                     setEmail(e.target.value);
-                    console.log(e.target.value, 'email');
                   }}
                 />
                 <Input
@@ -59,10 +57,8 @@ import { useState } from "react";
                   placeholder="Enter your password"
                   type="password"
                   variant="bordered"
-                  // value={password}
                   onChange={(e) => {
                     setPassword(e.target.value);
-                    console.log(e.target.value, 'password');
                   }}
                 />
                 <div className="flex py-2 px-1 justify-between">
@@ -73,7 +69,6 @@ import { useState } from "react";
                     isSelected={isStaff}
                     onChange={(e) => {
                       setIsStaff(e.target.checked);
-                      console.log(e.target.checked, 'isStaff');
                     }}
                   >
                     Are you a staff member?
