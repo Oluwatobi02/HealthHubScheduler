@@ -46,11 +46,12 @@ const Notifications = ({ isOpen, onOpenChange, onOpen }: NotificationsProps) => 
   const {registerEvent} = useWebSocket();
   const { token } = useAppContext();
   const [notis, setNotis] = useState<Notification[]>([]);
+  const [notiDep, setNotiDep] = useState(true)
 
   useEffect(() => {
-    registerEvent("notification", (data : Notification) => {
-      console.log(data);
-      setNotis((prev) => [data,...prev]);
+    registerEvent("notification", (data : boolean) => {
+      console.log(data)
+      setNotiDep((prev) => !prev)
     })
   },[registerEvent])
   const getNotifications = async () => {
@@ -66,7 +67,7 @@ const Notifications = ({ isOpen, onOpenChange, onOpen }: NotificationsProps) => 
   };
   useEffect(() => {
     getNotifications();
-  }, []);
+  }, [notiDep]);
   useEffect(() => {
     onOpen()
   },[notis])

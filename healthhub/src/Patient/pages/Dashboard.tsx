@@ -30,7 +30,7 @@ const Dashboard = () => {
       setLoading(true)
       await setTimeout(async() =>{
       }, 3000)
-      const res = await fetch(`http://localhost:5000/appointments/?patientid=${user.id}&page=${page}&all=false`, {
+      const res = await fetch(`http://localhost:5000/appointments/?patientid=${user.id}&page=${page}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

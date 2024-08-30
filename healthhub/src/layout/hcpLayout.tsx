@@ -13,12 +13,11 @@ import {
   DrawerContent,
   DrawerCloseButton,
   useDisclosure,
-  Stack,
   useColorMode,
   useColorModeValue,
   VStack,
 } from '@chakra-ui/react';
-import { FaBars, FaSun, FaMoon, FaCalendar, FaPlus, FaAddressBook } from 'react-icons/fa';
+import { FaBars, FaMoon, FaCalendar, FaPlus, FaAddressBook } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 
 interface LayoutProps {
@@ -29,7 +28,7 @@ const HCPLayout: React.FC<LayoutProps> = ({ children }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const navigate = useNavigate()
   const { toggleColorMode } = useColorMode();
-  const colorModeIcon = useColorModeValue(FaSun, FaMoon);
+  // const colorModeIcon = useColorModeValue(FaSun, FaMoon);
   const bg = useColorModeValue('gray.100', 'gray.900');
   const navBg = useColorModeValue('white', 'gray.800');
 
@@ -39,7 +38,7 @@ const HCPLayout: React.FC<LayoutProps> = ({ children }) => {
         <IconButton aria-label="Menu" icon={<FaBars />} onClick={onOpen} />
         <Heading size="md">Doctor Dashboard</Heading>
         <Flex alignItems="center">
-          <IconButton aria-label="Toggle color mode" icon={<colorModeIcon />} onClick={toggleColorMode} mr="4" />
+          <IconButton aria-label="Toggle color mode" icon={<FaMoon />} onClick={toggleColorMode} mr="4" />
           <Avatar name="Dr. John Doe" src="https://i.pravatar.cc/300" />
         </Flex>
       </Flex>

@@ -1,7 +1,7 @@
 from app.models.appointment import Appointment
 from app.models.patient import Patient
 from app.utils import algorithms, helper
-
+from datetime import datetime
 class AppointmentService:
 
     @staticmethod
@@ -25,12 +25,14 @@ class AppointmentService:
         return Appointment.objects(health_care_professional_id=hcp_id)
     
     @staticmethod
-    def get_patient_appointments(patient_id,skip,limit,get_all):
-        if get_all:
-            appointments = Appointment.objects(patient_id=patient_id).order_by('-date')
-            return [app.to_dict() for app in appointments]
-        appointnments =  Appointment.objects(patient_id=patient_id).skip(skip).limit(limit).order_by('-date')
-        return [app.to_dict() for app in appointnments]
+    def get_patient_appointments(patient_id):
+        appointments = Appointment.objects(patient_id=patient_id).order_by('-date')
+        return [app.to_dict() for app in appointments]
+    
+    @staticmethod
+    def get_patient_upcoming_appointments(patient_id):
+        appointments = Appointment.objects(patient_id=patient_id, date__gte=datetime.now()).order_by('date')
+        return [app.to_dict() for app in appointments]
     
     @staticmethod
     def is_appointment_available(appointment):

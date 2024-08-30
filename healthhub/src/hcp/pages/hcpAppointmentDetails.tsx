@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   Box,
   Flex,
@@ -11,7 +10,6 @@ import {
   useColorModeValue,
 } from '@chakra-ui/react';
 import { useParams } from 'react-router-dom';
-import HCPLayout from '../components/HCPLayout';
 
 const appointments = [
   {
@@ -41,16 +39,16 @@ const HCPAppointmentDetailsPage = () => {
 
   return (
       <Flex direction="column" alignItems="center" bg={useColorModeValue('white', 'gray.800')} p="8" rounded="md" shadow="md">
-        <Avatar src={appointment.profilePic} size="2xl" mb="4" />
-        <Heading size="lg" mb="2">{appointment.patientName}</Heading>
-        <Text fontSize="md" color="gray.500">{appointment.date}</Text>
-        <Text fontSize="md" color="gray.500" mb="4">{appointment.time}</Text>
+        <Avatar src={appointment?.profilePic} size="2xl" mb="4" />
+        <Heading size="lg" mb="2">{appointment?.patientName}</Heading>
+        <Text fontSize="md" color="gray.500">{appointment?.date}</Text>
+        <Text fontSize="md" color="gray.500" mb="4">{appointment?.time}</Text>
         <Divider mb="4" />
         <Box w="full" textAlign="left">
           <Heading size="md" mb="2">Details</Heading>
-          <Text mb="4">{appointment.details}</Text>
+          <Text mb="4">{appointment?.details}</Text>
           <Heading size="md" mb="2">Notes</Heading>
-          <Text mb="4">{appointment.notes}</Text>
+          <Text mb="4">{appointment?.notes}</Text>
         </Box>
         <Stack direction="row" spacing="4">
           <Button colorScheme="blue">Edit Appointment</Button>

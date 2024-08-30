@@ -4,7 +4,7 @@ import { Card, Icon, Button, Divider, List, Modal, Header, Loader, Input, Dropdo
 import { useNavigate } from 'react-router-dom';
 import { FaPlus, FaCalendarAlt, FaMapMarkerAlt, FaUserMd, FaSearch, FaCalendarDay, FaDownload, FaEllipsisH } from 'react-icons/fa';
 import { motion } from 'framer-motion';
-import { Calendar, Spinner, } from '@nextui-org/react';
+import { Spinner, } from '@nextui-org/react';
 import { useAppContext } from '../../Context/customHook';
 import {  FAppointment } from '../../types/types';
 
@@ -15,11 +15,10 @@ const AppointmentPage = () => {
   const [selectedAppointment, setSelectedAppointment] = useState<FAppointment>();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('All');
-  const [showCalendar, setShowCalendar] = useState(false);
-  const navigate = useNavigate();
   const [appointments, setAppointments] = useState<FAppointment[]>()
   const {user, token} = useAppContext()
-
+  
+  const navigate = useNavigate();
   const filterOptions = ['All', 'Upcoming', 'Past'];
   const filteredAppointments = appointments?.
   filter(appointment => filterType === 'All' || appointment.status === filterType.toLowerCase()).
@@ -37,7 +36,7 @@ const AppointmentPage = () => {
     setSearchTerm(e.target.value);
   };
 
-  const handleFilterChange = (e: SyntheticEvent, { value }: DropdownProps) => {
+  const handleFilterChange = (_: SyntheticEvent, { value }: DropdownProps) => {
     if (typeof value === 'string') {
       setFilterType(value);
     } else {
@@ -49,6 +48,7 @@ const AppointmentPage = () => {
     setSelectedAppointment(appointment);
     setModalOpen(true);
   };
+
   const getAppointment = async () => {
     const res = await fetch(`http://localhost:5000/appointments/?patientid=${user.id}&all=true`, {
       method: 'GET',
@@ -101,15 +101,6 @@ const AppointmentPage = () => {
           <Button
             icon
             labelPosition='left'
-            color='blue'
-            onClick={() => setShowCalendar(!showCalendar)}
-          >
-            <FaCalendarDay className="mr-2" />
-            {showCalendar ? 'Hide Calendar' : 'Show Calendar'}
-          </Button>
-          <Button
-            icon
-            labelPosition='left'
             color='orange'
             onClick={() => console.log('Download appointment summary')}
           >
@@ -117,12 +108,6 @@ const AppointmentPage = () => {
             Download Summary
           </Button>
         </div>
-
-        {showCalendar && (
-          <div className="mb-8">
-            <Calendar />
-          </div>
-        )}
 
         <Card fluid className="shadow-xl rounded-lg bg-white border border-gray-200">
           <Card.Content>

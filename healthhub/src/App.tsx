@@ -15,11 +15,12 @@ import FAQPage from "./Patient/pages/faq";
 import DetailedResource from "./Patient/pages/Resources";
 import HCPLayout from "./layout/hcpLayout";
 import HCPProfile from "./hcp/pages/hcpProfile";
-import { ChakraBaseProvider, ChakraProvider, extendTheme, theme, useColorMode } from "@chakra-ui/react";
+import { ChakraProvider, extendTheme, } from "@chakra-ui/react";
 import HCPAppointments from "./hcp/pages/hcpAppointments";
 import HCPAppointmentDetailsPage from "./hcp/pages/hcpAppointmentDetails";
 import { UserProvider } from "./Context/userContext";
 import { WebSocketProvider } from "./Context/wsProvider";
+import GMap from "./maps/map";
 
 const mockAppointment = {
   id: 1,
@@ -80,6 +81,7 @@ function App() {
             <Route path="/authorize" element={<Authorize />} />
             <Route path="/register" element={<Register />} />
             <Route path="/hcp/*" element={<HCP />} />
+            <Route path="/maps" element={<GMap />} />
             <Route path="/*" element={<PatientLayout />} />
           </Routes>
         </UserProvider>

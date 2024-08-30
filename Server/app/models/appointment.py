@@ -52,10 +52,10 @@ class Appointment(db.Document):
                 "contact": self.health_care_professional_id.email
             },
             "status": self.status,
-            "date": self.date,
+            "date": str(self.date),
             "prescriptions": self.prescriptions,
-            "updated_at" : self.updated_at,
-            "created_at": self.created_at,
+            "updated_at" : str(self.updated_at),
+            "created_at": str(self.created_at),
             "type": self.type,
             "reason": self.reason,
             "notes": self.notes,

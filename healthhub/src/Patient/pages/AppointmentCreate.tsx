@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { Button, Card, DateValue } from '@nextui-org/react';
 import { DatePicker } from '@nextui-org/react';
 import { FaClock } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
 import { Input as SemanticInput, Dropdown } from 'semantic-ui-react';
 import { Appointment, HealthCareProfessional } from '../../types/types';
 import { useAppContext } from '../../Context/customHook';
@@ -15,7 +14,6 @@ const CreateAppointment = () => {
   const [date, setDate] = useState<DateValue>();
   const [time, setTime] = useState('');
   const [disableButton, setDisableButton] = useState<boolean>(true)
-  const navigate = useNavigate();
 
   const getHcp = async () => {
     const res = await fetch('http://localhost:5000/healthcareprofessionals/?all=true', {
@@ -97,7 +95,7 @@ const validateAppointment = () => {
             <p className="block text-sm font-medium text-gray-700 mb-2">Professional</p>
             <Dropdown
               selection
-              onChange={(e,data) => setAppointment({...appointment, health_care_professional_id: String(data.value)})}
+              onChange={(_,data) => setAppointment({...appointment, health_care_professional_id: String(data.value)})}
               options={professionals?.map((prof, index) => ({
                 key: index,
                 value: prof.id,
